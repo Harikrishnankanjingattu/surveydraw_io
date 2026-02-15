@@ -47,7 +47,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   snapToGrid, onToggleSnap, theme, onToggleTheme, onExport,
   onGlobalRotate
 }) => {
-  const tools: { id: Tool; icon: any; label: string }[] = [
+  const draftingTools: { id: Tool; icon: any; label: string }[] = [
     { id: 'SELECT', icon: MousePointer2, label: 'Select Tool' },
     { id: 'PAN', icon: Hand, label: 'Pan Tool' },
     { id: 'POINT', icon: Dot, label: 'Create Point' },
@@ -58,7 +58,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     { id: 'ERASER', icon: Eraser, label: 'Eraser Tool' },
   ];
 
-  const btnClass = "p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center relative group";
+  const btnClass = "p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center relative group shrink-0";
   const activeBtnClass = theme === 'dark'
     ? "bg-blue-600/20 text-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.2)] border border-blue-500/30 scale-105"
     : "bg-blue-500 text-white shadow-lg shadow-blue-500/30 scale-105";
@@ -73,6 +73,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       backdrop-blur-md z-[110] transition-all duration-500
       ${theme === 'dark' ? 'bg-slate-900/80 border-white/5' : 'bg-white/80 border-slate-200'}
     `}>
+      {/* Brand & Mobile Actions */}
       <div className="flex items-center justify-between w-full lg:w-auto mb-2 lg:mb-0">
         <div className="flex flex-col mr-4 sm:mr-8 group cursor-default">
           <span className="font-black text-2xl leading-none tracking-tighter bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600 bg-clip-text text-transparent group-hover:filter group-hover:brightness-110 transition-all duration-500">
@@ -93,11 +94,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center space-x-1 w-full lg:w-auto overflow-x-auto no-scrollbar py-1">
-        <div className="h-10 w-px bg-slate-700/30 mx-2 hidden lg:block" />
+      {/* Main Toolbelt - Scrollable on Mobile */}
+      <div className="flex items-center space-x-2 w-full lg:w-auto overflow-x-auto no-scrollbar py-1">
 
+        {/* Drafting Group */}
         <div className="flex items-center space-x-1 p-1 bg-slate-950/10 dark:bg-black/20 rounded-2xl border border-white/5 shrink-0">
-          {tools.map(tool => (
+          {draftingTools.map(tool => (
             <button
               key={tool.id}
               onClick={() => setActiveTool(tool.id)}
@@ -111,27 +113,38 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           ))}
         </div>
 
-        <div className="h-10 w-px bg-slate-700/30 mx-2 shrink-0" />
+        <div className="h-8 w-px bg-slate-700/30 shrink-0 mx-1" />
 
-        <div className="flex items-center space-x-1 shrink-0 mr-4">
-          <button onClick={onUndo} disabled={!canUndo} className={`${btnClass} ${inactiveBtnClass} disabled:opacity-10 disabled:grayscale`}>
+        {/* History Group (Undo/Redo/Clear) */}
+        <div className="flex items-center space-x-1 shrink-0">
+          <button onClick={onUndo} disabled={!canUndo} className={`${btnClass} ${inactiveBtnClass} disabled:opacity-10 disabled:grayscale`} title="Undo">
             <Undo2 size={18} />
           </button>
-          <button onClick={onClear} className={`${btnClass} hover:bg-red-500/10 text-slate-400 hover:text-red-500`}>
+          <button onClick={onRedo} disabled={!canRedo} className={`${btnClass} ${inactiveBtnClass} disabled:opacity-10 disabled:grayscale`} title="Redo">
+            <Redo2 size={18} />
+          </button>
+          <button onClick={onClear} className={`${btnClass} hover:bg-red-500/10 text-slate-400 hover:text-red-500`} title="Clear">
             <Trash2 size={18} />
           </button>
         </div>
 
-        <div className="lg:flex items-center space-x-1 shrink-0 hidden">
-          <button onClick={onToggleSnap} className={`${btnClass} ${snapToGrid ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20' : inactiveBtnClass}`}>
+        <div className="h-8 w-px bg-slate-700/30 shrink-0 mx-1" />
+
+        {/* Visibility & Settings Group (Always accessible including mobile) */}
+        <div className="flex items-center space-x-1 shrink-0">
+          <button onClick={onToggleGrid} className={`${btnClass} ${gridVisible ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20' : inactiveBtnClass}`} title="Toggle Grid">
+            <Grid3x3 size={18} />
+          </button>
+          <button onClick={onToggleSnap} className={`${btnClass} ${snapToGrid ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20' : inactiveBtnClass}`} title="Snap to Grid">
             <Magnet size={18} />
           </button>
-          <button onClick={onGlobalRotate} className={`${btnClass} hover:text-amber-400 transition-colors`}>
+          <button onClick={onGlobalRotate} className={`${btnClass} hover:text-amber-400 transition-colors`} title="Rotate Overall">
             <RotateCcw size={18} />
           </button>
         </div>
       </div>
 
+      {/* Desktop Only Actions */}
       <div className="hidden lg:flex items-center space-x-3">
         <div className="flex items-center space-x-1">
           <button onClick={onZoomOut} className={`${btnClass} ${inactiveBtnClass}`} title="Zoom Out">
