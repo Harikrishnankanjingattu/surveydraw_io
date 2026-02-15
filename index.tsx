@@ -432,9 +432,10 @@ const App = () => {
     return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
   }, [draw]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.PointerEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -442,7 +443,7 @@ const App = () => {
     const { button } = e;
     const worldPos = canvasToWorld(x, y, state.offset, state.scale, rect.width, rect.height);
 
-    // Middle mouse pan support
+    // Middle mouse pan support (button 1) or Hand tool (PAN)
     if (button === 1 || state.activeTool === 'PAN') {
       setIsPanning(true);
       setPanStart({ x: e.clientX, y: e.clientY });
@@ -780,13 +781,14 @@ const App = () => {
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (e: React.PointerEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     setMousePos({ x, y });
+
     if (isPanning) {
       const dx = (e.clientX - panStart.x) / state.scale;
       const dy = -(e.clientY - panStart.y) / state.scale;
@@ -875,7 +877,7 @@ const App = () => {
     }
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = (e: React.PointerEvent) => {
     if (isDragging || isRotating || isScaling) {
       push(state);
       setIsDragging(false);
@@ -1308,11 +1310,11 @@ const App = () => {
       <div className="flex flex-1 overflow-hidden relative">
         <canvas
           ref={canvasRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
           onWheel={handleWheel}
-          className="absolute inset-0 block w-full h-full cursor-crosshair bg-transparent"
+          className="absolute inset-0 block w-full h-full cursor-crosshair bg-transparent touch-none"
         />
         <div className="absolute top-4 left-4 pointer-events-none p-4 rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-md border border-white/20 dark:border-white/5 shadow-xl transition-all duration-500">
           <div className="flex items-center space-x-2">
