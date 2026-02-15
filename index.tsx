@@ -444,6 +444,7 @@ const App = () => {
 
     // Middle mouse pan support
     if (button === 1 || state.activeTool === 'PAN') {
+      setIsPanning(true);
       setPanStart({ x: e.clientX, y: e.clientY });
       return;
     }
@@ -696,23 +697,6 @@ const App = () => {
         else { xx = cp1.x + param * C; yy = cp1.y + param * D; }
         return Math.hypot(x - xx, y - yy) < 10;
       }) : null;
-
-      if (state.activeTool === 'HARITRIANGLE') {
-        const targetPoint = clickedPoint || {
-          id: generateId('P', state.points.length),
-          x: worldPos.x,
-          y: worldPos.y,
-          label: `P${state.points.length + 1}`,
-          color: '#3b82f6'
-        };
-
-        if (!clickedPoint) {
-          updateState(s => ({ ...s, points: [...s.points, targetPoint as Point] }));
-        }
-
-        setHariPrompt({ p1Id: targetPoint.id, x: e.clientX, y: e.clientY });
-        return;
-      }
 
       if (clickedPoint || clickedLine) {
         let newTemp = [...tempPoints];
