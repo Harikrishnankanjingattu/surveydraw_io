@@ -17,7 +17,8 @@ import {
   Eraser,
   Magnet,
   RotateCcw,
-  Type
+  Type,
+  Crosshair
 } from 'lucide-react';
 import { Tool } from '../types';
 
@@ -39,13 +40,14 @@ interface ToolbarProps {
   onToggleTheme: () => void;
   onExport: () => void;
   onGlobalRotate: () => void;
+  onRecenter: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
   activeTool, setActiveTool, onUndo, onRedo, canUndo, canRedo,
   onClear, onZoomIn, onZoomOut, gridVisible, onToggleGrid,
   snapToGrid, onToggleSnap, theme, onToggleTheme, onExport,
-  onGlobalRotate
+  onGlobalRotate, onRecenter
 }) => {
   const draftingTools: { id: Tool; icon: any; label: string }[] = [
     { id: 'SELECT', icon: MousePointer2, label: 'Select Tool' },
@@ -132,6 +134,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
         {/* Visibility & Settings Group (Always accessible including mobile) */}
         <div className="flex items-center space-x-1 shrink-0">
+          <button onClick={onRecenter} className={`${btnClass} ${inactiveBtnClass}`} title="Recenter Design">
+            <Crosshair size={18} />
+          </button>
           <button onClick={onToggleGrid} className={`${btnClass} ${gridVisible ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20' : inactiveBtnClass}`} title="Toggle Grid">
             <Grid3x3 size={18} />
           </button>
@@ -147,6 +152,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       {/* Desktop Only Actions */}
       <div className="hidden lg:flex items-center space-x-3">
         <div className="flex items-center space-x-1">
+          <button onClick={onRecenter} className={`${btnClass} ${inactiveBtnClass}`} title="Recenter">
+            <Crosshair size={18} />
+          </button>
           <button onClick={onZoomOut} className={`${btnClass} ${inactiveBtnClass}`} title="Zoom Out">
             <ZoomOut size={18} />
           </button>

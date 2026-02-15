@@ -13,7 +13,11 @@ import { Toolbar } from './components/Toolbar';
 import { Sidebar } from './components/Sidebar';
 import { InfoBar } from './components/InfoBar';
 import { SetupModal } from './components/SetupModal';
-import { Layers, Edit3, Triangle as TriangleIcon, ZoomIn, ZoomOut, Type } from 'lucide-react';
+import {
+  Layers, Edit3, Triangle as TriangleIcon, ZoomIn, ZoomOut, Type,
+  Expand,
+  Shrink
+} from 'lucide-react';
 
 const INITIAL_STATE: AppState = {
   points: [],
@@ -1304,6 +1308,7 @@ const App = () => {
           onToggleTheme={() => updateState(s => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' }), false)}
           onExport={exportPNG}
           onGlobalRotate={() => setRotationPrompt({ id: 'GLOBAL', type: 'GLOBAL', x: window.innerWidth / 2, y: window.innerHeight / 2 })}
+          onRecenter={() => updateState(s => ({ ...s, offset: { x: 0, y: 0 } }), false)}
         />
       </div>
 
@@ -1349,16 +1354,16 @@ const App = () => {
               <button
                 onClick={() => handleScaleTriangle(state.selection.id!, 0.9)}
                 className="p-3 bg-slate-800 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-xl transition-all active:scale-90 group"
-                title="Scale Down (10%)"
+                title="Geometrically Shrink Analysis (Mutates side lengths)"
               >
-                <ZoomOut size={18} className="group-hover:scale-110 transition-transform" />
+                <Shrink size={18} className="group-hover:scale-110 transition-transform" />
               </button>
               <button
                 onClick={() => handleScaleTriangle(state.selection.id!, 1.1)}
                 className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-90 group"
-                title="Scale Up (10%)"
+                title="Geometrically Expand Analysis (Mutates side lengths)"
               >
-                <ZoomIn size={18} className="group-hover:scale-110 transition-transform" />
+                <Expand size={18} className="group-hover:scale-110 transition-transform" />
               </button>
               <button
                 onClick={() => {
